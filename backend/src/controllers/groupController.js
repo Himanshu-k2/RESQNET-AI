@@ -21,30 +21,70 @@ const generateInviteCode = (groupName) => {
 // @access  Protected
 export const createGroup = async (req, res, next) => {
   try {
-    const { name, description, category, areaDescription, privacy } = req.body;
+    const { name, description, category, areaDescription, privacy } = req.body || {};
 
-    if (!name || !name.trim()) {
+    console.log('[GroupController] createGroup request received:', {
+      userId: req.user?._id,
+      userEmail: req.user?.email,
+      payload: { name, category, areaDescription, description, privacy },
+    });
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      console.warn('[GroupController] createGroup rejected: missing group name');
       return res.status(400).json({ success: false, message: 'Please provide a group name.' });
     }
 
-    if (name.trim().length > 60) {
+    const trimmedName = name.trim();
+    if (trimmedName.length < 2) {
+      console.warn('[GroupController] createGroup rejected: group name too short (<2 chars)');
+      return res.status(400).json({ success: false, message: 'Group name must be at least 2 characters.' });
+    }
+
+    if (trimmedName.length > 60) {
+      console.warn('[GroupController] createGroup rejected: group name too long (>60 chars)');
       return res.status(400).json({ success: false, message: 'Group name cannot exceed 60 characters.' });
     }
 
-    // Generate unique invite code
-    let inviteCode = generateInviteCode(name.trim());
+    // Normalize category against allowed schema enums
+    const ALLOWED_CATEGORIES = [
+      'APARTMENT', 'NEIGHBORHOOD', 'WORKPLACE', 'SCHOOL_COLLEGE', 'VOLUNTEER_ORG', 'FAMILY_FRIENDS', 'OTHER',
+      'Family', 'Hostel', 'College', 'Apartment', 'Office', 'Community', 'Other'
+    ];
+    let safeCategory = 'Community';
+    if (category && typeof category === 'string') {
+      const match = ALLOWED_CATEGORIES.find((c) => c.toUpperCase() === category.trim().toUpperCase());
+      safeCategory = match || 'OTHER';
+    }
+
+    // Normalize privacy
+    let safePrivacy = 'INVITE_ONLY';
+    if (privacy && typeof privacy === 'string') {
+      const pUpper = privacy.trim().toUpperCase();
+      if (pUpper === 'PRIVATE' || pUpper === 'INVITE_ONLY') {
+        safePrivacy = pUpper;
+      }
+    }
+
+    // Sanitize string lengths to prevent Mongoose schema validation failures
+    const safeDescription = description && typeof description === 'string' ? description.trim().slice(0, 300) : '';
+    const safeAreaDescription = areaDescription && typeof areaDescription === 'string' ? areaDescription.trim().slice(0, 100) : '';
+
+    // Generate unique invite code with loop guard
+    let inviteCode = generateInviteCode(trimmedName);
     let codeExists = await Group.findOne({ inviteCode });
-    while (codeExists) {
-      inviteCode = generateInviteCode(name.trim());
+    let attempts = 0;
+    while (codeExists && attempts < 10) {
+      inviteCode = generateInviteCode(trimmedName);
       codeExists = await Group.findOne({ inviteCode });
+      attempts++;
     }
 
     const group = await Group.create({
-      name: name.trim(),
-      description: description ? description.trim() : '',
-      category: category || 'Community',
-      areaDescription: areaDescription ? areaDescription.trim() : '',
-      privacy: privacy || 'PRIVATE',
+      name: trimmedName,
+      description: safeDescription,
+      category: safeCategory,
+      areaDescription: safeAreaDescription,
+      privacy: safePrivacy,
       inviteCode,
       createdBy: req.user._id,
     });
@@ -63,9 +103,15 @@ export const createGroup = async (req, res, next) => {
       group: group._id,
       createdBy: req.user._id,
       authorName: req.user.name || 'Community Admin',
-      title: `Welcome to ${group.name}`,
+      title: `Welcome to ${group.name}`.slice(0, 120),
       content: 'This safety circle is now active. Members can voluntarily check in, view emergency updates, and request assistance.',
       priority: 'NORMAL',
+    });
+
+    console.log('[GroupController] Community group created successfully:', {
+      groupId: group._id,
+      name: group.name,
+      inviteCode: group.inviteCode,
     });
 
     res.status(201).json({
@@ -74,6 +120,17 @@ export const createGroup = async (req, res, next) => {
       group,
     });
   } catch (error) {
+    console.error('[GroupController] Error creating community group:', error);
+    if (error.name === 'ValidationError') {
+      const msg = Object.values(error.errors).map((val) => val.message).join(', ');
+      return res.status(400).json({ success: false, message: msg });
+    }
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'A group with a similar unique identifier already exists. Please try again.',
+      });
+    }
     next(error);
   }
 };

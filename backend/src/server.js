@@ -23,10 +23,36 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Middlewares
+// CORS configuration supporting local dev, mobile testing, and deployed origins
+const allowedOrigins = process.env.CLIENT_URL || process.env.CORS_ORIGIN;
+const originList = allowedOrigins
+  ? allowedOrigins.split(',').map((o) => o.trim())
+  : [];
+
 app.use(
   cors({
-    origin: ['http://localhost:5174', 'http://127.0.0.1:5174'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Localhost or 127.0.0.1
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+
+      // Local network IPs for mobile testing (192.168.x.x, 10.x.x.x, 172.x.x.x)
+      if (/^https?:\/\/(192\.168|10\.|172\.(1[6-9]|2[0-9]|3[0-1]))\./.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Configured production client URLs
+      if (originList.includes(origin) || originList.includes('*')) {
+        return callback(null, true);
+      }
+
+      // Fallback: allow origin to support deployed frontends
+      return callback(null, true);
+    },
     credentials: true,
   })
 );

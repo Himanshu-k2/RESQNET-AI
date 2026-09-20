@@ -1,4 +1,6 @@
 import http from 'http';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const BASE_URL = 'http://127.0.0.1:5001';
 
@@ -57,10 +59,19 @@ async function runTests() {
   }
 
   // 1. Authenticate Admin
-  const adminLogin = await request(`${BASE_URL}/api/auth/login`, {
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@resqnet.org';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'AdminSecurePassword2026!';
+  let adminLogin = await request(`${BASE_URL}/api/auth/login`, {
     method: 'POST',
-    body: { email: 'admin@resqnet.org', password: 'AdminSecurePassword2026!' },
+    body: { email: adminEmail, password: adminPassword },
   });
+  if (!adminLogin.data?.token && adminEmail !== 'admin@resqnet.org') {
+    // Fallback to default admin
+    adminLogin = await request(`${BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      body: { email: 'admin@resqnet.org', password: 'AdminSecurePassword2026!' },
+    });
+  }
   const adminToken = adminLogin.data?.token;
   assert(Boolean(adminToken), '1. Admin logged in successfully');
 

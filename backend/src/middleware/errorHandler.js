@@ -28,9 +28,15 @@ export const errorHandler = (err, req, res, next) => {
     return res.status(401).json({ success: false, message: 'Invalid authentication token.' });
   }
 
+  // Body parser JSON syntax error
+  if (err.name === 'SyntaxError' && (err.status === 400 || err.statusCode === 400)) {
+    return res.status(400).json({ success: false, message: 'Invalid JSON payload received.' });
+  }
+
   // Default server error
-  res.status(error.statusCode || 500).json({
+  const statusCode = err.statusCode || err.status || error.statusCode || 500;
+  res.status(statusCode).json({
     success: false,
-    message: error.message || 'Internal Server Error',
+    message: error.message || err.message || 'Internal Server Error',
   });
 };

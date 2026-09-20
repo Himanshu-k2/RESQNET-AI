@@ -3,10 +3,8 @@
  * Handles automatic synchronisation of pending offline reports to the server.
  */
 
-import axios from "axios";
+import api from "./api";
 import { getPendingReports, updateReport } from "./offlineStorage";
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 let isSyncing = false;
 
@@ -27,11 +25,11 @@ export async function syncPendingReports(token, onProgress) {
       if (onProgress) onProgress({ type: "uploading", record });
 
       try {
-        const response = await axios.post(
-          `${API_BASE}/api/incidents`,
+        const response = await api.post(
+          '/incidents',
           record.reportData,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
             timeout: 15000,
           }
         );

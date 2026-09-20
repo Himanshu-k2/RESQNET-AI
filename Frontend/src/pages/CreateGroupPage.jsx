@@ -49,21 +49,59 @@ export const CreateGroupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
+
+    if (!isAuthenticated) {
+      setError('You must be signed in to create a community group. Redirecting to login...');
+      setTimeout(() => navigate('/auth?tab=login'), 1500);
+      return;
+    }
+
+    const trimmedName = formData.name.trim();
+    if (!trimmedName) {
       setError('Please provide a group name.');
       return;
     }
 
+    if (trimmedName.length < 2) {
+      setError('Group name must be at least 2 characters.');
+      return;
+    }
+
+    if (trimmedName.length > 60) {
+      setError('Group name cannot exceed 60 characters.');
+      return;
+    }
+
+    const payload = {
+      name: trimmedName,
+      category: formData.category || 'APARTMENT',
+      areaDescription: (formData.areaDescription || '').trim().slice(0, 100),
+      description: (formData.description || '').trim().slice(0, 300),
+      privacy: formData.privacy || 'INVITE_ONLY',
+    };
+
+    console.log('[CreateGroupPage] Submitting create group payload:', payload);
+
     try {
       setLoading(true);
       setError(null);
-      const res = await api.post('/groups', formData);
+      const res = await api.post('/groups', payload);
+      console.log('[CreateGroupPage] Group created response:', res.data);
       if (res.data?.success) {
         setCreatedGroup(res.data.group);
       }
     } catch (err) {
-      console.error('Error creating group:', err);
-      setError(err.message || 'Failed to create community group.');
+      console.error('[CreateGroupPage] Failed to create community group:', {
+        status: err.status,
+        message: err.message,
+        backendResponse: err.response?.data,
+      });
+
+      if (err.status === 401) {
+        setError('Your session has expired or you are not logged in. Please sign in to create a group.');
+      } else {
+        setError(err.message || 'Failed to create community group.');
+      }
     } finally {
       setLoading(false);
     }
@@ -156,6 +194,25 @@ export const CreateGroupPage = () => {
               Set up a private coordination circle for your building, neighborhood, workplace, or family during crisis situations.
             </p>
           </div>
+
+          {!isAuthenticated && (
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold">Authentication Required</p>
+                <p className="text-amber-800">
+                  You need to be signed in to create and manage a community group.{' '}
+                  <Link to="/auth?tab=login" className="underline font-bold text-amber-950 hover:text-primary-700">
+                    Sign in here
+                  </Link>{' '}
+                  or{' '}
+                  <Link to="/auth?tab=register" className="underline font-bold text-amber-950 hover:text-primary-700">
+                    register an account
+                  </Link>.
+                </p>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
