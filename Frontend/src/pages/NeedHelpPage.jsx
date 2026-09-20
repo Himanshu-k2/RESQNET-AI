@@ -859,8 +859,8 @@ export const NeedHelpPage = () => {
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mt-1">
                 {submittedIncident.isOfflineSaved
-                  ? 'Your report is safely stored in browser IndexedDB. It will be uploaded automatically when an internet connection returns.'
-                  : 'Your report has been successfully stored in the central coordination database.'}
+                  ? 'Your report is safely saved on this device. It will be synchronized automatically when an internet connection returns.'
+                  : 'Your report has been successfully received by the emergency coordination center.'}
               </p>
             </div>
 

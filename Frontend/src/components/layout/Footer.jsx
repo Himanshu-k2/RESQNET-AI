@@ -24,14 +24,14 @@ export const Footer = () => {
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed max-w-md">
-              AI-Powered Emergency Coordination & Resource Network. Bridging critical supply gaps during disasters through multimodal AI triage, offline-first IndexedDB resilience, and verified coordinator resource matching.
+              AI-Powered Emergency Coordination & Resource Network. Bridging critical supply gaps during disasters through multimodal AI triage, local offline resilience, and verified coordinator resource matching.
             </p>
             <div className="flex items-center space-x-4 pt-2 text-xs text-slate-400">
               <span className="flex items-center gap-1">
                 <Cpu className="w-3.5 h-3.5 text-teal-400" /> Modular Gemini AI
               </span>
               <span className="flex items-center gap-1">
-                <Database className="w-3.5 h-3.5 text-emerald-400" /> Offline-First IDB
+                <Database className="w-3.5 h-3.5 text-emerald-400" /> Offline-Ready Resilience
               </span>
               <span className="flex items-center gap-1">
                 <Wifi className="w-3.5 h-3.5 text-amber-400" /> Zero-Loss Sync
@@ -82,7 +82,7 @@ export const Footer = () => {
           <p>© {new Date().getFullYear()} ResQNet AI. Emergency Coordination &amp; Resource Network.</p>
           <p className="mt-2 sm:mt-0 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-            Backend Port 5001 • Frontend Port 5174
+            Live Network Active • All Systems Operational
           </p>
         </div>
       </div>

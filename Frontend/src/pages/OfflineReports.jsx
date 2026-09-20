@@ -108,7 +108,7 @@ export default function OfflineReports() {
             <h1 className="text-2xl font-black text-navy-900 tracking-tight">Offline Emergency Reports</h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Browser IndexedDB store ensuring zero data loss during network disruptions.
+            Secure offline storage on this device ensuring zero data loss during network disruptions.
           </p>
         </div>
 

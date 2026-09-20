@@ -766,7 +766,7 @@ export const CoordinatorDashboard = () => {
             </div>
 
             <div className="text-xs text-slate-400">
-              Showing active GPS coordinates from central database
+              Showing active GPS coordinates from live coordination records
             </div>
           </div>
 

@@ -6,13 +6,13 @@ export const PhaseTracker = () => {
     {
       num: 'Phase 1',
       title: 'Project Setup & Core Infrastructure',
-      desc: 'Node.js, Express, MongoDB (Dual-Mode in-memory & external), JWT auth, and React + Tailwind design system.',
+      desc: 'Secure data management, token-based authentication, and modern responsive design system.',
       status: 'COMPLETED',
       features: [
-        'Express REST API & Dual-mode MongoDB',
-        'Role-based JWT authentication (Citizen, Coordinator, Admin)',
-        'Responsive Tailwind CSS design system',
-        'Automated disaster simulation data seed engine'
+        'Emergency coordination network & secure data synchronization',
+        'Role-based access control (Citizen, Coordinator, Admin)',
+        'Responsive emergency-ready design system',
+        'Automated disaster coordination test engine'
       ]
     },
     {
@@ -46,7 +46,7 @@ export const PhaseTracker = () => {
       desc: 'IndexedDB persistent storage layer, background sync queue, duplicate prevention, and network status detection.',
       status: 'COMPLETED',
       features: [
-        'Client-side IndexedDB database (resqnet_offline)',
+        'Secure local offline storage layer for emergency reports',
         'Heartbeat & browser online/offline status detection hook',
         'Global responsive connectivity banner',
         'Automatic reconnection synchronization queue',
@@ -75,7 +75,7 @@ export const PhaseTracker = () => {
       status: 'COMPLETED',
       features: [
         'Emergency Simulation Engine with 4 crisis presets (Flood, Fire, Medical, Food/Water)',
-        'Strict database isolation (isSimulation: true) preventing real-world dispatch confusion',
+        'Strict data isolation (isSimulation: true) preventing real-world dispatch confusion',
         'Safe reset & data purging protocol preserving real citizen distress reports',
         'Interactive 10-step guided presentation walkthrough stepper',
         'High-contrast accessible indicators, keyboard navigation & error recovery'

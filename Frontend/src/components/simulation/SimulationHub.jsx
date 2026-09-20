@@ -579,7 +579,7 @@ export const SimulationHub = ({ isOpen, onClose, onScenarioStarted, onResetCompl
               <div>
                 <h3 className="text-base font-black text-navy-900">Simulation Data Management &amp; Safety Isolation</h3>
                 <p className="text-xs text-slate-500">
-                  ResQNet AI strictly enforces database separation between synthetic demonstration records and live citizen emergency reports.
+                  ResQNet AI strictly enforces secure data separation between synthetic demonstration records and live citizen emergency reports.
                 </p>
               </div>
 
@@ -665,7 +665,7 @@ export const SimulationHub = ({ isOpen, onClose, onScenarioStarted, onResetCompl
         <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>Simulation Backend Ready (Port 5001)</span>
+            <span>Simulation Coordination Engine Ready</span>
           </div>
           <button
             onClick={onClose}

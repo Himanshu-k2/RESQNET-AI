@@ -71,7 +71,7 @@ api.interceptors.response.use(
       responseData || error.message
     );
 
-    let message = 'An unexpected network or server error occurred.';
+    let message = 'Something went wrong. Please check your connection and try again.';
     if (responseData) {
       if (typeof responseData.message === 'string' && responseData.message.trim()) {
         message = responseData.message;
@@ -82,7 +82,7 @@ api.interceptors.response.use(
       } else if (typeof responseData === 'string' && responseData.trim()) {
         message = responseData;
       }
-    } else if (error.message) {
+    } else if (error.message && !error.message.includes('status code')) {
       message = error.message;
     }
 

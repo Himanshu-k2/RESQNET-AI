@@ -239,7 +239,7 @@ export const LandingPage = () => {
             <div className="flex items-center gap-3">
               <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Real-time MongoDB Sync
+                Live Data Synchronization
               </span>
               <button
                 onClick={fetchDashboardOverview}

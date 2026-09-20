@@ -244,7 +244,7 @@ export const AdminRequestsPage = () => {
               Admin Console
             </span>
             <span className="text-xs font-bold text-slate-400">•</span>
-            <span className="text-xs font-semibold text-slate-500">Live Database Operations</span>
+            <span className="text-xs font-semibold text-slate-500">Live Emergency Operations</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
             Emergency Requests & Resource Assignments
